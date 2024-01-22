@@ -1,0 +1,2 @@
+# VSS
+A C++ and OpenCL implementation of the general k out of k scheme of the visual secret sharing described by Naor and Shamir in 1995 in [this paper](https://link.springer.com/content/pdf/10.1007/BFb0053419.pdf).
