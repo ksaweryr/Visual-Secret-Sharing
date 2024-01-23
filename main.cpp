@@ -203,6 +203,8 @@ int main(int argc, char** argv) {
             std::cout << "Platform number should be between 1 and " << allPlatforms.size() << std::endl;
             return 1;
         }
+
+        platform = allPlatforms[platformNum];
     }
 
     std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;
