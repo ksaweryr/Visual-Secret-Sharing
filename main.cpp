@@ -136,8 +136,8 @@ std::vector<int> s1_from_s0(std::vector<int> const& s0) {
 }
 
 int main(int argc, char** argv) {
-    if(argc != 3) {
-        std::cout << "Usage: " << argv[0] << " <file> <number of shares>" << std::endl;
+    if(argc != 3 && argc != 4) {
+        std::cout << "Usage: " << argv[0] << " <file> <number of shares> [OpenCL platform number (default 1)]" << std::endl;
         return 1;
     }
 
@@ -164,7 +164,47 @@ int main(int argc, char** argv) {
     auto s0 = gen_s0(num_shares);
     auto s1 = s1_from_s0(s0);
 
-    cl::Platform platform{};
+    std::vector<cl::Platform> allPlatforms{};
+    cl::Platform::get(&allPlatforms);
+
+    if(allPlatforms.size() == 0) {
+        std::cout << "No platform found" << std::endl;
+        return 1;
+    }
+
+    cl::Platform platform;
+
+    if(allPlatforms.size() == 1) {
+        platform = allPlatforms[0];
+    } else if(argc == 3) {
+        std::cout << "Found platforms: " << std::endl;
+
+        for(int i = 0; i < allPlatforms.size(); i++) {
+            std::cout << (i + 1) << ". " << allPlatforms[i].getInfo<CL_PLATFORM_NAME>() << std::endl;
+        }
+
+        int platformNum = 0;
+
+        while(platformNum < 1 || platformNum > allPlatforms.size()) {
+            std::cout << "Choose your platform (" << 1 << "-" << allPlatforms.size() << "): ";
+            std::cin >> platformNum;
+        }
+
+        platform = allPlatforms[platformNum - 1];
+    } else {
+        int platformNum;
+
+        if(sscanf(argv[3], "%d ", &platformNum) != 1) {
+            std::cout << "Not a valid number: `" << argv[3] << "`" << std::endl;
+            return 1;
+        }
+
+        if(platformNum < 1 || platformNum > allPlatforms.size()) {
+            std::cout << "Platform number should be between 1 and " << allPlatforms.size() << std::endl;
+            return 1;
+        }
+    }
+
     std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;
     
     std::vector<cl::Device> all_devices;
