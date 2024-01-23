@@ -204,7 +204,7 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        platform = allPlatforms[platformNum];
+        platform = allPlatforms[platformNum - 1];
     }
 
     std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;
